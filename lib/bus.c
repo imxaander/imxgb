@@ -1,5 +1,6 @@
 #include <bus.h>
 #include <cart.h>
+#include <ram.h>
 
 // 0x0000 - 0x3FFF : ROM Bank 0
 // 0x4000 - 0x7FFF : ROM Bank 1 - Switchable
@@ -17,17 +18,73 @@
 
 u8 bus_read(u16 address){
     if(address < 0x8000){
+        //ROM READ, the ROM is loaded in the catridge,
         return cart_read(address);
+    }else if(address < 0xA000){
+        //TODO
+        //CHAR RAM, BG MAP 1 & 2
+        NO_IMPL
+    }else if(address < 0xC000){
+        //CARTRIDGE RAM READ IS THE memory inside the cartridge / rom...
+        return cart_read(address);
+    }else if(address < 0xE000){
+        //WORKING RAM READ THIS IS THE MEMORY OF OUR GAMEBOY
+        return wram_read(address);
+    }else if(address < 0xFE00){
+        printf("echo ram read");
+        return 0;
+    }else if(address < 0xFEA0){
+        //for ppu, this contains the pixels and assets
+        //TODO
+        return 0 ;
+    }else if(address < 0xFF00){
+        //reserved / unusable
+        return 0;
+    }else if(address < 0xFF80){
+        //io registers
+        //TODO
+    }else if(address == 0xFFFF){
+        //CPU ENABLE ON/OFF REGISTER
+        //TODO
     }
 
+
+    return hram_read(address);
     NO_IMPL
 };
 void bus_write(u16 address, u8 value){
     if(address < 0x8000){
+        //ROM WRITE, the ROM is loaded in the catridge,
         cart_write(address, value);
+    }else if(address < 0xA000){
+        //TODO
+        //CHAR RAM, BG MAP 1 & 2
+        printf("bus read, %04X", address);
+        NO_IMPL
+    }else if(address < 0xC000){
+        //CARTRIDGE RAM WRITE IS THE memory inside the cartridge / rom...
+        cart_write(address, value);
+    }else if(address < 0xE000){
+        //WORKING RAM WRITE THIS IS THE MEMORY OF OUR GAMEBOY
+        wram_write(address, value);
+    }else if(address < 0xFE00){
+        printf("echo ram write");
+    }else if(address < 0xFEA0){
+        //OAM
+        //for ppu, this contains the pixels and assets
+        //TODO
+    }else if(address < 0xFF00){
+        //reserved / unusable write
+    }else if(address < 0xFF80){
+        //io registers
+        //TODO
+    }else if(address == 0xFFFF){
+        //CPU SET ENABLE ON/OFF REGISTER
+        //TODO
+    }else{
+        hram_write(address, value);
     }
-
-    NO_IMPL
+    return;
 };
 
 u16 bus_read16(u16 address) {

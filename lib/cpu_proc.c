@@ -60,6 +60,7 @@ static void proc_xor(cpu_context* ctx){
 }
 static void proc_ld(cpu_context* ctx){
     if(ctx->dest_is_mem){
+
         if(ctx->cur_inst->reg_2 >= RT_AF){
             emu_cycles(1);
             bus_write16(ctx->mem_dest, ctx->fetched_data);
@@ -67,6 +68,8 @@ static void proc_ld(cpu_context* ctx){
             emu_cycles(1);
             bus_write(ctx->mem_dest, ctx->fetched_data);
         }
+
+        return;
     }
 
     if(ctx->cur_inst->mode == AM_HL_SPR){
@@ -76,10 +79,25 @@ static void proc_ld(cpu_context* ctx){
 
         cpu_set_flags(ctx, 0, 0, hflag, cflag);
         cpu_set_reg(ctx->cur_inst->reg_2,
-                    cpu_read_reg(ctx->cur_inst->reg_2) + (char)ctx->fetched_data);
+        cpu_read_reg(ctx->cur_inst->reg_2) + (char)ctx->fetched_data);
 
         return;
     }
+    cpu_set_reg(ctx->cur_inst->reg_1, ctx->fetched_data);
+}
+
+static void proc_ldh(cpu_context* ctx){
+    if(ctx->cur_inst->reg_1 == RT_A){
+        cpu_set_reg(ctx->cur_inst->reg_1, bus_read(0xFF00 | ctx->fetched_data));
+    }else{
+        bus_write(0xFF00 | ctx->fetched_data, ctx->regs.a);
+    }
+
+    emu_cycles(1);
+}
+
+static void proc_dec(cpu_context* ctx){
+
 }
 IN_PROC processes[] = {
     [IN_NONE] = proc_none,
@@ -88,9 +106,9 @@ IN_PROC processes[] = {
     [IN_DI] = proc_di,
     [IN_XOR] = proc_xor,
     [IN_LD] = proc_ld,
+    [IN_LDH] = proc_ldh,
 };
 
 IN_PROC get_proc_func(in_type type){
     return processes[type];
 }
-

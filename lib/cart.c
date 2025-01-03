@@ -174,9 +174,12 @@ u8 cart_read(u16 address){
 };
 void cart_write(u16 address, u8 value){
 
+    printf("CART WRITE ...");
+
     NO_IMPL
 };
 void cart_write16(u16 address, u16 value){
+    printf("CART WRITE 16BIT...");
 
     NO_IMPL
 };
