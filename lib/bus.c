@@ -1,6 +1,7 @@
 #include <bus.h>
 #include <cart.h>
 #include <ram.h>
+#include <cpu.h>
 
 // 0x0000 - 0x3FFF : ROM Bank 0
 // 0x4000 - 0x7FFF : ROM Bank 1 - Switchable
@@ -46,6 +47,7 @@ u8 bus_read(u16 address){
     }else if(address == 0xFFFF){
         //CPU ENABLE ON/OFF REGISTER
         //TODO
+        get_cpu_ie_register();
     }
 
 
@@ -53,6 +55,7 @@ u8 bus_read(u16 address){
     NO_IMPL
 };
 void bus_write(u16 address, u8 value){
+    //printf("BUS WRITING IN :%04X\n", address);
     if(address < 0x8000){
         //ROM WRITE, the ROM is loaded in the catridge,
         cart_write(address, value);
@@ -77,9 +80,12 @@ void bus_write(u16 address, u8 value){
         //reserved / unusable write
     }else if(address < 0xFF80){
         //io registers
+
         //TODO
     }else if(address == 0xFFFF){
         //CPU SET ENABLE ON/OFF REGISTER
+
+        set_cpu_ie_register(value);
         //TODO
     }else{
         hram_write(address, value);
