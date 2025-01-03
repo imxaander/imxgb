@@ -13,7 +13,7 @@ u8 wram_read(u16 address){
     address -= 0xC000;
 
     if(address >= 0x2000){
-        printf("INVALID WRAM ADDRESS!\n");
+        printf("INVALID WRAM ADDRESS!:%04X\n", address);
         exit(-7);
     }
 
@@ -30,16 +30,15 @@ u8 hram_read(u16 address){
     address -= 0xFF80;
 
     if(address >= 0xFF80){
-        printf("INVALID WRAM ADDRESS!\n");
-        exit(-7);
+        printf("INVALID HRAM ADDRESS!:%04X\n", address);
     }
 
-    return ctx.wram[address];
+    return ctx.hram[address];
 }
 
 void hram_write(u16 address, u8 value){
     address -= 0xFF80;
 
-    ctx.wram[address] = value;
+    ctx.hram[address] = value;
 }
 

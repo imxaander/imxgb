@@ -57,4 +57,4 @@ void cpu_set_reg(reg_type rt, u16 val);
 void fetch_data();
 
 u8 get_cpu_ie_register();
-void set_cpu_ie_register();
+void set_cpu_ie_register(u8 val);

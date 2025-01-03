@@ -1,7 +1,9 @@
+#include <common.h>
 #include <bus.h>
 #include <cart.h>
 #include <ram.h>
 #include <cpu.h>
+
 
 // 0x0000 - 0x3FFF : ROM Bank 0
 // 0x4000 - 0x7FFF : ROM Bank 1 - Switchable
@@ -47,9 +49,8 @@ u8 bus_read(u16 address){
     }else if(address == 0xFFFF){
         //CPU ENABLE ON/OFF REGISTER
         //TODO
-        get_cpu_ie_register();
+        return get_cpu_ie_register();
     }
-
 
     return hram_read(address);
     NO_IMPL
