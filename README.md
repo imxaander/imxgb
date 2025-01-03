@@ -1,4 +1,11 @@
 # imxgb
+`IN DEVELOPMENT` <BR>
+- [ ] Cart (in the making...)
+- [ ] CPU (in the making...)
+- [ ] Address Bus
+- [ ] PPU
+- [ ] Timer
+
 my gameboy emulator project, written in C following this series: <br>
 yt : https://www.youtube.com/playlist?list=PLVxiWMqQvhg_yk4qy2cSC3457wZJga_e5 <br>
 repo : https://github.com/rockytriton/LLD_gbemu <br>
