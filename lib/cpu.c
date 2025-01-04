@@ -47,3 +47,8 @@ u8 get_cpu_ie_register(){
 void set_cpu_ie_register(u8 val){
     ctx.ie_register = val;
 };
+
+cpu_registers* get_cpu_regs(){
+    return &ctx.regs;
+};
+

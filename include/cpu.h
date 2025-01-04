@@ -58,3 +58,9 @@ void fetch_data();
 
 u8 get_cpu_ie_register();
 void set_cpu_ie_register(u8 val);
+
+cpu_registers* get_cpu_regs();
+
+//TODO instructions list in instructions .h
+//https://youtu.be/GU2I_zHd4wU?list=PLVxiWMqQvhg_yk4qy2cSC3457wZJga_e5&t=1045
+//https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html

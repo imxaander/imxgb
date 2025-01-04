@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "random": "cpp",
-        "cpu.h": "c"
+        "cpu.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c",
+        "stack.h": "c"
     }
 }
