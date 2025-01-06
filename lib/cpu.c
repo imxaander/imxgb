@@ -32,7 +32,14 @@ bool cpu_step() {
         //printf("EXECUTING %s: \n\tOPCODE: %02X,\n\tPC: %04X,\n\tTYPE: %d,\n\tDATA: %04X - %02X - %02X\n", //inst_name(ctx.cur_inst->type), ctx.cur_opcode, cur_pc, ctx.cur_inst->type, ctx.fetched_data, bus_read(ctx.regs.pc + 1), bus_read(ctx.regs.pc + 2));
 
         //more organized way
-        printf("%04X:%6s %02X %02X %02X (A: %02X, BC:%02X%02X, DE: %02X%02X, F:%02X, HL:%02X%02X, SP:%04X) \n", cur_pc, inst_name(ctx.cur_inst->type), ctx.cur_opcode, bus_read(cur_pc + 1), bus_read(cur_pc + 2), ctx.regs.a, ctx.regs.b, ctx.regs.c, ctx.regs.d, ctx.regs.e,ctx.regs.f, ctx.regs.h, ctx.regs.l, ctx.regs.sp);
+        char flags[16];
+        sprintf(flags, "%c%c%c%c", 
+            ctx.regs.f & (1 << 7) ? 'Z' : '-',
+            ctx.regs.f & (1 << 6) ? 'N' : '-',
+            ctx.regs.f & (1 << 5) ? 'H' : '-',
+            ctx.regs.f & (1 << 4) ? 'C' : '-'
+        );
+        printf("%08LX - %04X:%6s %02X %02X %02X (A: %02X, BC:%02X%02X, DE: %02X%02X, F:%s, HL:%02X%02X, SP:%04X) \n", emu_get_context()->ticks,cur_pc, inst_name(ctx.cur_inst->type), ctx.cur_opcode, bus_read(cur_pc + 1), bus_read(cur_pc + 2), ctx.regs.a, ctx.regs.b, ctx.regs.c, ctx.regs.d, ctx.regs.e, flags, ctx.regs.h, ctx.regs.l, ctx.regs.sp);
 
         execute();
 

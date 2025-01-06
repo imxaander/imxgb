@@ -4,6 +4,24 @@
 #include <bus.h>
 #include <stack.h>
 
+reg_type rt_lookup[] = {
+    RT_B,
+    RT_C,
+    RT_D,
+    RT_E,
+    RT_H,
+    RT_L,
+    RT_HL,
+    RT_A,
+};
+
+reg_type decode_reg(u8 reg){
+    if (reg > 0b111){
+        return RT_NONE;
+    }
+    return rt_lookup[reg];    
+}
+
 static bool check_cond(cpu_context* ctx){
     bool z = CPU_FLAG_Z;
     bool c = CPU_FLAG_C;
@@ -53,6 +71,27 @@ static void proc_nop(cpu_context* ctx){
     return;
 }
 
+static void proc_and(cpu_context* ctx){
+    ctx->regs.a &= ctx->fetched_data;
+    cpu_set_flags(ctx, (ctx->regs.a == 0), 0, 1, 0);
+}
+
+static void proc_xor(cpu_context* ctx){
+    ctx->regs.a ^= ctx->fetched_data & 0xFF;
+    cpu_set_flags(ctx, ctx->regs.a == 0, 0, 0, 0);
+}
+
+static void proc_or(cpu_context* ctx){
+    ctx->regs.a |= ctx->fetched_data & 0xFF;
+    cpu_set_flags(ctx, ctx->regs.a == 0, 0, 0, 0);
+}
+
+static void proc_cp(cpu_context* ctx){
+
+    int n = (int)ctx->regs.a - (int)ctx->fetched_data;
+    cpu_set_flags(ctx, n == 0, 1, ((int)ctx->regs.a & 0x0F) - ((int)ctx->fetched_data & 0x0F) < 0, n < 0);
+}
+
 static void proc_di(cpu_context* ctx){
     ctx->int_master_enabled = false;
 }
@@ -75,10 +114,7 @@ static void proc_call(cpu_context* ctx){
     goto_addr(ctx, ctx->fetched_data, true);
 }
 
-static void proc_xor(cpu_context* ctx){
-    ctx->regs.a ^= ctx->fetched_data & 0xFF;
-    cpu_set_flags(ctx, ctx->regs.a, 0, 0, 0);
-}
+
 static void proc_ld(cpu_context* ctx){
     if(ctx->dest_is_mem){
 
@@ -117,8 +153,6 @@ static void proc_ldh(cpu_context* ctx){
 
     emu_cycles(1);
 }
-
-
 
 static void  proc_pop(cpu_context* ctx){
     u16 lo = stack_pop();
@@ -239,10 +273,8 @@ static void proc_sbc(cpu_context *ctx) {
 
     int z = cpu_read_reg(ctx->cur_inst->reg_1) - val == 0;
 
-    int h = ((int)cpu_read_reg(ctx->cur_inst->reg_1) & 0xF) 
-        - ((int)ctx->fetched_data & 0xF) - ((int)CPU_FLAG_C) < 0;
-    int c = ((int)cpu_read_reg(ctx->cur_inst->reg_1)) 
-        - ((int)ctx->fetched_data) - ((int)CPU_FLAG_C) < 0;
+    int h = ((int)cpu_read_reg(ctx->cur_inst->reg_1) & 0xF) - ((int)ctx->fetched_data & 0xF) - ((int)CPU_FLAG_C) < 0;
+    int c = ((int)cpu_read_reg(ctx->cur_inst->reg_1)) - ((int)ctx->fetched_data) - ((int)CPU_FLAG_C) < 0;
 
     cpu_set_reg(ctx->cur_inst->reg_1, cpu_read_reg(ctx->cur_inst->reg_1) - val);
     cpu_set_flags(ctx, z, 1, h, c);
@@ -285,13 +317,36 @@ static void proc_rst(cpu_context* ctx){
     goto_addr(ctx, ctx->cur_inst->param, true);
 }
 
+static void proc_cb(cpu_context* ctx){
+    u8 op = ctx->fetched_data;
+    reg_type reg = decode_reg(op & 0b111);
+
+    u8 bit = (op >> 3) & 0b111;
+    u8 bit_op = (op >> 6) & 0b11;
+
+    emu_cycles(1);
+
+    if(reg == RT_HL){
+        emu_cycles(2);
+    }
+
+    switch (bit_op){
+    case 1:
+        //bit
+        break;
+    case 2:
+        //bit
+        break;
+    default:
+        break;
+    }
+}
 
 IN_PROC processes[] = {
     [IN_NONE] = proc_none,
     [IN_NOP] = proc_nop,
     [IN_JP] = proc_jp,
     [IN_DI] = proc_di,
-    [IN_XOR] = proc_xor,
     [IN_LD] = proc_ld,
     [IN_LDH] = proc_ldh,
     [IN_JR] = proc_jr,
@@ -303,6 +358,15 @@ IN_PROC processes[] = {
     [IN_RETI] = proc_reti,
     [IN_POP] = proc_pop,
     [IN_PUSH] = proc_push,
+    [IN_ADD] = proc_add,
+    [IN_ADC] = proc_adc,
+    [IN_SUB] = proc_sub,
+    [IN_SBC] = proc_sbc,
+    [IN_AND] = proc_and,
+    [IN_XOR] = proc_xor,
+    [IN_OR] = proc_or,
+    [IN_CP] = proc_cp,
+    [IN_CB] = proc_cb,
 };
 
 IN_PROC get_proc_func(in_type type){
