@@ -54,6 +54,10 @@ IN_PROC get_proc_func(in_type type);
 
 u16 cpu_read_reg(reg_type rt);
 void cpu_set_reg(reg_type rt, u16 val);
+
+u8 cpu_read_reg8(reg_type rt);
+void cpu_set_reg8(reg_type rt, u8 val);
+
 void fetch_data();
 
 u8 get_cpu_ie_register();

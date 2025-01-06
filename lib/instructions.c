@@ -233,6 +233,7 @@ instruction instructions[0x100] = {
     [0xC7] = {IN_RST, AM_IMP, RT_NONE, RT_NONE, CT_NONE, 0x00},
     [0xC9] = {IN_RET},
     [0xCA] = {IN_JP, AM_D16, RT_NONE, RT_NONE, CT_Z},
+    [0xCB] = {IN_CB, AM_D8},
     [0xCC] = {IN_CALL, AM_D16, RT_NONE, RT_NONE, CT_Z},
     [0xCD] = {IN_CALL, AM_D16},
     [0xCE] = {IN_ADC, AM_R_D8, RT_A},

@@ -1,4 +1,5 @@
 #include <cpu.h>
+#include <bus.h>
 
 extern cpu_context ctx;
 
