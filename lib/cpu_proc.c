@@ -110,10 +110,10 @@ static void proc_jr(cpu_context* ctx){
     u16 addr = ctx->regs.pc + rel;
     goto_addr(ctx, addr, false);
 }
+
 static void proc_call(cpu_context* ctx){
     goto_addr(ctx, ctx->fetched_data, true);
 }
-
 
 static void proc_ld(cpu_context* ctx){
     if(ctx->dest_is_mem){
@@ -268,6 +268,7 @@ static void proc_adc(cpu_context *ctx) {
         (a & 0xF) + (u & 0xF) + c > 0xF,
         a + u + c > 0xFF);
 }
+
 static void proc_sbc(cpu_context *ctx) {
     u8 val = ctx->fetched_data + CPU_FLAG_C;
 
@@ -290,6 +291,7 @@ static void proc_sub(cpu_context *ctx) {
     cpu_set_reg(ctx->cur_inst->reg_1, val);
     cpu_set_flags(ctx, z, 1, h, c);
 }
+
 static void proc_ret(cpu_context* ctx){
     if(ctx->cur_inst->cond != CT_NONE){
         emu_cycles(1);
@@ -433,6 +435,62 @@ switch(bit_op) {
     NO_IMPL
 }
 
+static void proc_rrca(cpu_context* ctx){
+    u8 b = ctx->regs.a & 0b1;
+    ctx->regs.a >>= 1;
+    ctx->regs.a |= (b << 7);
+
+    cpu_set_flags(ctx, 0, 0, 0, b);
+}
+
+static void proc_rlca(cpu_context* ctx){
+    u8 u = ctx->regs.a;
+    bool c = (u >> 7) & 1;
+    u =  (u << 1) | c;
+    ctx->regs.a = u;
+
+    cpu_set_flags(ctx, 0, 0, 0, c);
+}
+
+static void proc_rla(cpu_context* ctx){
+    u8 u = ctx->regs.a;
+    u8 cf = CPU_FLAG_C;
+    u8 c = (u >> 7) & 1;
+
+    ctx->regs.a = (u << 1) | cf;
+    cpu_set_flags(ctx, 0, 0, 0, c);
+}
+
+static void proc_rra(cpu_context* ctx){
+    u8 c = CPU_FLAG_C;
+    u8 nC = ctx->regs.a & 1;
+
+    ctx->regs.a >>= 1;
+    ctx->regs.a |= (c << 7);
+
+    cpu_set_flags(ctx, 0, 0, 0, nC);   
+}
+
+static void proc_stop(cpu_context* ctx){
+    sprintf(stderr, "STOPPING");
+    NO_IMPL
+}
+
+static void proc_daa(cpu_context* ctx){
+
+}
+
+static void proc_cpl(cpu_context* ctx){
+    
+}
+
+static void proc_scf(cpu_context* ctx){
+    
+}
+
+static void proc_ccf(cpu_context* ctx){
+    
+}
 IN_PROC processes[] = {
     [IN_NONE] = proc_none,
     [IN_NOP] = proc_nop,
@@ -458,6 +516,11 @@ IN_PROC processes[] = {
     [IN_OR] = proc_or,
     [IN_CP] = proc_cp,
     [IN_CB] = proc_cb,
+    [IN_RRCA] = proc_rrca, 
+    [IN_RLCA] = proc_rlca,
+    [IN_RLA] = proc_rla,
+    [IN_RRA] = proc_rra,
+    [IN_STOP] = proc_stop,
 };
 
 IN_PROC get_proc_func(in_type type){
