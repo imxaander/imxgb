@@ -96,6 +96,10 @@ static void proc_di(cpu_context* ctx){
     ctx->int_master_enabled = false;
 }
 
+static void proc_ei(cpu_context* ctx){
+    ctx->enabling_ime = true;
+}
+
 static void proc_none(cpu_context* ctx){
     printf("invalid instruction\n");
     exit(-7);
@@ -472,25 +476,44 @@ static void proc_rra(cpu_context* ctx){
 }
 
 static void proc_stop(cpu_context* ctx){
-    sprintf(stderr, "STOPPING");
+    fprintf(stderr, "STOPPING");
     NO_IMPL
 }
 
 static void proc_daa(cpu_context* ctx){
+    u8 u = 0;
+    int fc = 0;
 
+    if(CPU_FLAG_H || (CPU_FLAG_N && (ctx->regs.a & 0xFF) > 9)){
+        u = 6;
+    }
+
+    if(CPU_FLAG_C || (!CPU_FLAG_N && ctx->regs.a > 0x99)){
+        u |= 0x60;
+        fc = 1;
+    }
+
+    ctx->regs.a += CPU_FLAG_N ? -u : u;
+    cpu_set_flags(ctx, ctx->regs.a == 0, -1, 0, fc);
 }
 
 static void proc_cpl(cpu_context* ctx){
-    
+    ctx->regs.a = ~ctx->regs.a;
+    cpu_set_flags(ctx, -1, 1, 1, -1);
 }
 
 static void proc_scf(cpu_context* ctx){
-    
+    cpu_set_flags(ctx, -1, 0, 0, 1);
 }
 
 static void proc_ccf(cpu_context* ctx){
-    
+    cpu_set_flags(ctx, -1, 0, 0, CPU_FLAG_C ^ 1);
 }
+
+static void proc_halt(cpu_context* ctx){
+    ctx->halted = true;
+}
+
 IN_PROC processes[] = {
     [IN_NONE] = proc_none,
     [IN_NOP] = proc_nop,
@@ -520,7 +543,14 @@ IN_PROC processes[] = {
     [IN_RLCA] = proc_rlca,
     [IN_RLA] = proc_rla,
     [IN_RRA] = proc_rra,
+    [IN_CPL] = proc_cpl,
+    [IN_SCF] = proc_scf,
+    [IN_DAA] = proc_daa,
+    [IN_CCF] = proc_ccf,
+    [IN_HALT] = proc_halt,
     [IN_STOP] = proc_stop,
+    [IN_EI] = proc_ei,
+
 };
 
 IN_PROC get_proc_func(in_type type){
