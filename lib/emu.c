@@ -69,5 +69,5 @@ int emu_run(int argc, char **argv) {
 
 void emu_cycles(int cpu_cycles){
     //printf("cpu cycling %d times...\n", cpu_cycles);
-    ctx.ticks += cpu_cycles;
+    // ctx.ticks += cpu_cycles;
 };

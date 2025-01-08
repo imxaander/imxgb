@@ -110,7 +110,7 @@ static void proc_jp(cpu_context* ctx){
 }
 
 static void proc_jr(cpu_context* ctx){
-    char rel = (char)(ctx->fetched_data & 0xFF);
+    int8_t rel = (int8_t)(ctx->fetched_data & 0xFF);
     u16 addr = ctx->regs.pc + rel;
     goto_addr(ctx, addr, false);
 }
@@ -158,7 +158,7 @@ static void proc_ldh(cpu_context* ctx){
     emu_cycles(1);
 }
 
-static void  proc_pop(cpu_context* ctx){
+static void proc_pop(cpu_context* ctx){
     u16 lo = stack_pop();
     emu_cycles(1);
     u16 hi = stack_pop();
@@ -547,10 +547,9 @@ IN_PROC processes[] = {
     [IN_SCF] = proc_scf,
     [IN_DAA] = proc_daa,
     [IN_CCF] = proc_ccf,
-    [IN_HALT] = proc_halt,
     [IN_STOP] = proc_stop,
-    [IN_EI] = proc_ei,
-
+    // [IN_EI] = proc_ei,
+    [IN_HALT] = proc_halt,
 };
 
 IN_PROC get_proc_func(in_type type){

@@ -283,7 +283,7 @@ instruction instructions[0x100] = {
     [0xF7] = {IN_RST, AM_IMP, RT_NONE, RT_NONE, CT_NONE, 0x30},
     [0xF8] = {IN_LD, AM_HL_SPR, RT_HL, RT_SP},
     [0xF9] = {IN_LD, AM_R_R, RT_SP, RT_HL},
-    [0xFB] = {IN_EI},
+    // [0xFB] = {IN_EI},
     [0xFE] = {IN_OR, AM_D8},
     [0xFF] = {IN_RST, AM_IMP, RT_NONE, RT_NONE, CT_NONE, 0x38},
 
