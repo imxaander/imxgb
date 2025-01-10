@@ -41,6 +41,7 @@ typedef struct{
     //interrupt register
     u8 ie_register;
     bool enabling_ime;
+    u8 int_flags;
 } cpu_context;
 
 
@@ -69,7 +70,10 @@ void set_cpu_ie_register(u8 val);
 cpu_registers* get_cpu_regs();
 
 
+u8 get_cpu_int_flags();
+void set_cpu_int_flags(u8 flags);
 
 
+void* cpu_run();
 //https://youtu.be/GU2I_zHd4wU?list=PLVxiWMqQvhg_yk4qy2cSC3457wZJga_e5&t=1045
 //https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html

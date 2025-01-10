@@ -548,7 +548,7 @@ IN_PROC processes[] = {
     [IN_DAA] = proc_daa,
     [IN_CCF] = proc_ccf,
     [IN_STOP] = proc_stop,
-    // [IN_EI] = proc_ei,
+    [IN_EI] = proc_ei,
     [IN_HALT] = proc_halt,
 };
 

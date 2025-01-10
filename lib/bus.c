@@ -53,7 +53,7 @@ u8 bus_read(u16 address){
     }
 
     return hram_read(address);
-    NO_IMPL
+    // NO_IMPL
 };
 void bus_write(u16 address, u8 value){
     //printf("BUS WRITING IN :%04X\n", address);
@@ -64,7 +64,7 @@ void bus_write(u16 address, u8 value){
         //TODO
         //CHAR RAM, BG MAP 1 & 2
         printf("bus read, %04X", address);
-        NO_IMPL
+        // NO_IMPL
     }else if(address < 0xC000){
         //CARTRIDGE RAM WRITE IS THE memory inside the cartridge / rom...
         cart_write(address, value);

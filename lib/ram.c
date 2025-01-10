@@ -32,8 +32,8 @@ u8 hram_read(u16 address){
     if(address >= 0xFF80){
         printf("INVALID HRAM ADDRESS!:%04X\n", address);
     }
-
-    return ctx.hram[address];
+    return 0x0;
+    // return ctx.hram[address];
 }
 
 void hram_write(u16 address, u8 value){
