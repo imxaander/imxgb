@@ -1,7 +1,7 @@
 # imxgb
 `IN DEVELOPMENT` <BR>
 - [ ] Cart (in the making...)
-- [ ] CPU (in the making...)
+- [x] CPU (in the making...)
 - [ ] Address Bus
 - [ ] PPU
 - [ ] Timer
