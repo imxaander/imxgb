@@ -41,7 +41,11 @@ bool cpu_step() {
             ctx.regs.f & (1 << 5) ? 'H' : '-',
             ctx.regs.f & (1 << 4) ? 'C' : '-'
         );
-        printf("%08LX - %04X:%6s %02X %02X %02X (A: %02X, BC:%02X%02X, DE: %02X%02X, F:%s, HL:%02X%02X, SP:%04X) \n", emu_get_context()->ticks,cur_pc, inst_name(ctx.cur_inst->type), ctx.cur_opcode, bus_read(cur_pc + 1), bus_read(cur_pc + 2), ctx.regs.a, ctx.regs.b, ctx.regs.c, ctx.regs.d, ctx.regs.e, flags, ctx.regs.h, ctx.regs.l, ctx.regs.sp);
+
+        char inst[16];
+        inst_to_str(&ctx, inst);
+
+        printf("%08lx - %04X: %-12s %6s %02X %02X %02X (A: %02X, BC:%02X%02X, DE: %02X%02X, F:%s, HL:%02X%02X, SP:%04X) \n", emu_get_context()->ticks,cur_pc, inst, inst_name(ctx.cur_inst->type), ctx.cur_opcode, bus_read(cur_pc + 1), bus_read(cur_pc + 2), ctx.regs.a, ctx.regs.b, ctx.regs.c, ctx.regs.d, ctx.regs.e, flags, ctx.regs.h, ctx.regs.l, ctx.regs.sp);
 
         execute();
 

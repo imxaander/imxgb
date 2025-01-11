@@ -75,5 +75,6 @@ void set_cpu_int_flags(u8 flags);
 
 
 void* cpu_run();
+void inst_to_str();
 //https://youtu.be/GU2I_zHd4wU?list=PLVxiWMqQvhg_yk4qy2cSC3457wZJga_e5&t=1045
 //https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html
